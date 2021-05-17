@@ -8,6 +8,15 @@ The paper is available here: http://ceur-ws.org/Vol-2829/paper3.pdf
 
 Extended dataset can be downloaded from here: https://zenodo.org/record/4592249
 
+## Setup
+### For SVM Training and BERT Fine-tuning
+- Cuda 10.2
+- `conda env create -f environment.yml python=3.6.12`
+- `python -m spacy download en-core-web-lg==2.3.1`
+- To install ThunderSVM on linux system `pip install wheel https://github.com/Xtra-Computing/thundersvm/releases/download/v0.3.4/thundersvm_cuda10.1-0.3.4-cp36-cp36m-linux_x86_64.whl`
+- Alternatively, ThunderSVM release for windows can be found [here](https://github.com/Xtra-Computing/thundersvm/releases).
+
+
 If you find the shared resources useful, please cite:
 ```
 @inproceedings{DBLP:conf/www/CheemaHME21,
