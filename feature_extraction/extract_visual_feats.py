@@ -16,11 +16,11 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 import argparse
 
 parser = argparse.ArgumentParser(description='Extract Visual Features for Tweet Images')
-parser.add_argument('--vmodel', type=str, default='resnet152',
+parser.add_argument('--vmodel', '-v', type=str, default='resnet152',
                     help='resnet50 | resnet101 | resnet152')
-parser.add_argument('--vtype', type=str, default='imgnet',
+parser.add_argument('--vtype', '-t', type=str, default='imgnet',
                     help='imgnet | plc | hybrid')
-parser.add_argument('--dset', type=str, default='clef_en',
+parser.add_argument('--dset', '-d', type=str, default='clef_en',
                     help='clef_en | clef_ar | mediaeval | lesa')
 
 args = parser.parse_args()

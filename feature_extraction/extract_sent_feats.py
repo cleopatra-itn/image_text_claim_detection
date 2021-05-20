@@ -53,8 +53,17 @@ def main(args):
         t.Normalize(mean=[116.8007, 121.2751, 130.4602], std=[1,1,1]),  # mean subtraction
     ])
 
-    image_list = os.listdir(args.root)
-    data = ImageListDataset(image_list, root=args.root, transform=transform)
+    if args.dset == 'clef_en':
+        dloc = 'data/clef_en/images/'
+    elif args.dset == 'clef_ar':
+        dloc = 'data/clef_ar/images/'
+    elif args.dset == 'mediaeval':
+        dloc = 'data/mediaeval/images/'
+    else:
+        dloc = 'data/lesa/images/'
+    
+    image_list = os.listdir(dloc)
+    data = ImageListDataset(image_list, root=dloc, transform=transform)
     dataloader = DataLoader(data, batch_size=args.batch_size, num_workers=2)
     
     model = AlexNet if 'hybrid' in args.model else VGG19
@@ -85,7 +94,6 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Extract Visual Sentiment Features')
     parser.add_argument('-d', '--dset', default=None, help='Which dataset (clef_en | clef_ar | mediaeval | lesa)')
-    parser.add_argument('-r', '--root', default=None, help='Root path to prepend to image list')
     parser.add_argument('-m', '--model', type=str, choices=models, default='vgg19_finetuned_all', help='Pretrained model')
     parser.add_argument('-b', '--batch-size', type=int, default=32, help='Batch size')
     args = parser.parse_args()
