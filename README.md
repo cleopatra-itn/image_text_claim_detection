@@ -13,13 +13,27 @@ Extended dataset can be downloaded from here: https://zenodo.org/record/4592249
 - Cuda 10.2
 - `conda env create -f environment.yml python=3.6.12`
 - `python -m spacy download en-core-web-lg==2.3.1`
-- To install ThunderSVM on linux system `pip install wheel https://github.com/Xtra-Computing/thundersvm/releases/download/v0.3.4/thundersvm_cuda10.1-0.3.4-cp36-cp36m-linux_x86_64.whl`
+- To install ThunderSVM on linux system,  
+`pip install wheel https://github.com/Xtra-Computing/thundersvm/releases/download/v0.3.4/thundersvm_cuda10.1-0.3.4-cp36-cp36m-linux_x86_64.whl`
 - Alternatively, ThunderSVM release for windows can be found [here](https://github.com/Xtra-Computing/thundersvm/releases).
 
 ## Data and Feature Extraction
 - Download data from the zenodo repository
 - Extract each zip file in `data/`
+- Download pretrained places and hybrid models from [link]()
+- Extract Textual Features,
+    - English : `python feature_extraction/extract_bert_en.py -d clef_en -m bertbase -p clean`
+    - Arabic : `python feature_extraction/extract_bert_ar.py -m arabert`
+- Extract Visual Features
+    - Visual Sentiment : `python feature_extraction/extract_sent_feats.py -d clef_en -m vgg19_finetuned_all -b 32`
+    - Visual Scene : `python feature_extraction/extract_visual_feats.py -v resnet152 -t imgnet -d clef_en`
+- Use `-h` to see options
 
+## SVM Training
+-TODO
+
+## BERT Fine-tuning
+-TODO
 
 If you find the shared resources useful, please cite:
 ```
