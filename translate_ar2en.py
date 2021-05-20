@@ -7,7 +7,7 @@ import time
 translator = Translator()
 extractor = URLExtract()
 
-data_dict = json.load(open('data/clef/arabic/data.json', 'r'))
+data_dict = json.load(open('data/clef_ar/data.json', 'r'))
 
 for i, idx in enumerate(data_dict):
     urls = extractor.find_urls(data_dict[idx]['full_text'])
@@ -19,10 +19,10 @@ for i, idx in enumerate(data_dict):
         trans_text = translator.translate(text, src='ar', dest='en')
         data_dict[idx]['text_en'] = trans_text.text
     except:
-        json.dump(data_dict, open('data/clef/arabic/data.json', 'w', encoding='utf-8'))
+        json.dump(data_dict, open('data/clef_ar/data.json', 'w'))
 
     print(i)
     time.sleep(1)
 
 
-json.dump(data_dict, open('data/clef/arabic/data_translated.json', 'w', encoding='utf-8'))
+json.dump(data_dict, open('data/clef_ar/data.json', 'w'))
