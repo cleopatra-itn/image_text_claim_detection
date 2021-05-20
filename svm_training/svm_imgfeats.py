@@ -10,13 +10,13 @@ import json
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Training SVM')
+parser = argparse.ArgumentParser(description='Training SVM with Image Features')
 parser.add_argument('--normalize', type=int, default=1,
                     help='0,1')
 parser.add_argument('--vfeat', type=str, default='feats',
-                    help='feats | logits | feats_fc6 | feats_fc7')
+                    help='feats | logits | feats_fc7')
 parser.add_argument('--vmodel', type=str, default='resnet152',
-                    help='resnet50 | resnet101')
+                    help='resnet50 | resnet101 | resnet152')
 parser.add_argument('--vtype', type=str, default='imgnet',
                     help='imgnet | plc | hybrid | t4sa')
 parser.add_argument('--dset', type=str, default='clef_en',
@@ -78,9 +78,9 @@ vfeat = args.vfeat
 vtype = args.vtype
 
 if dset == 'clef_en':
-    data_loc = 'data/clef/english/splits/'
+    data_loc = 'data/clef_en/splits/'
 elif dset == 'clef_ar':
-    data_loc = 'data/clef/arabic/splits/'
+    data_loc = 'data/clef_ar/splits/'
 elif dset == 'mediaeval':
     data_loc = 'data/mediaeval/splits/'
 else:
@@ -128,11 +128,11 @@ print("PCA No. Components: %.2f, Dim: %d, SV: %d"%(best_pca_nk, ft_val.shape[1],
 print("C: %.3f, Gamma: %.3f, kernel: %s\n"%(classifier.C, classifier.gamma, classifier.kernel))
 print("Train Accuracy: %.4f, Train F1-Score: %.4f"%(round(metrics.accuracy_score(lab_train, train_preds),4),
                         round(metrics.f1_score(lab_train, train_preds, average='weighted'),4)))
-print(metrics.confusion_matrix(lab_train, train_preds, labels=[0,1]))
+# print(metrics.confusion_matrix(lab_train, train_preds, labels=[0,1]))
 print("Val Accuracy: %.4f, Val F1-Score: %.4f"%(round(accuracy,4), round(f1_score,4)))
-print(metrics.confusion_matrix(lab_val, val_preds, labels=[0,1]))
+# print(metrics.confusion_matrix(lab_val, val_preds, labels=[0,1]))
 print("Test Accuracy: %.4f, Test F1-Score: %.4f"%(
                         round(metrics.accuracy_score(lab_test, test_preds),4),
                         round(metrics.f1_score(lab_test, test_preds, average='weighted'),4)))
-print(metrics.confusion_matrix(lab_test, test_preds, labels=[0,1]))
+# print(metrics.confusion_matrix(lab_test, test_preds, labels=[0,1]))
 print('\n')

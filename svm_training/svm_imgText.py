@@ -10,17 +10,17 @@ import json
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Training SVM')
+parser = argparse.ArgumentParser(description='Training SVM with Image and Text Features')
 parser.add_argument('--normalize', type=int, default=1,
                     help='0,1')
 parser.add_argument('--vfeat', type=str, default='feats',
                     help='feats | logits | feats_fc6 | feats_fc7')
 parser.add_argument('--vmodel', type=str, default='resnet152',
                     help='resnet50 | resnet101')
-parser.add_argument('--tmodel', type=str, default='bert-base-uncased',
-                    help='bert-base-uncased | bertweet | covid_twitter | arabert ')
+parser.add_argument('--tmodel', type=str, default='bertbase',
+                    help='bertbase | bertweet | covidbert | arabert | arabicbert')
 parser.add_argument('--ttype', type=str, default='clean',
-                    help='clean | ht | raw | pp (arabic)')
+                    help='clean | raw')
 parser.add_argument('--tfeat', type=str, default='sumavg',
                     help='sumavg | catavg | last2 | last')
 parser.add_argument('--vtype', type=str, default='imgnet',
@@ -87,9 +87,9 @@ vtype = args.vtype
 ttype = args.ttype
 
 if dset == 'clef_en':
-    data_loc = 'data/clef/english/splits/'
+    data_loc = 'data/clef_en/splits/'
 elif dset == 'clef_ar':
-    data_loc = 'data/clef/arabic/splits/'
+    data_loc = 'data/clef_ar/splits/'
 elif dset == 'mediaeval':
     data_loc = 'data/mediaeval/splits/'
 else:
@@ -105,7 +105,7 @@ print(dset, vtype, vmodel, vfeat, ttype, tmodel, tfeat)
 
 img_dict  = json.load(open('features/image/%s_%s_%s.json'%(dset, vtype, vmodel), 'r'))
 
-if tmodel in ['bertarabic', 'bertweet', 'covid_twitter']:
+if dset != 'clef_ar':
     text_dict  = json.load(open('features/text/%s_%s/%s.json'%(dset, tmodel, tfeat), 'r'))
 else:
     text_dict  = json.load(open('features/text/%s_%s_%s/%s.json'%(dset, tmodel, ttype, tfeat), 'r'))
@@ -146,11 +146,11 @@ print("PCA No. Components: %.2f, Dim: %d, SV: %d"%(best_pca_nk, ft_val.shape[1],
 print("C: %.3f, Gamma: %.3f, kernel: %s\n"%(classifier.C, classifier.gamma, classifier.kernel))
 print("Train Accuracy: %.4f, Train F1-Score: %.4f"%(round(metrics.accuracy_score(lab_train, train_preds),4),
                         round(metrics.f1_score(lab_train, train_preds, average='weighted'),4)))
-print(metrics.confusion_matrix(lab_train, train_preds, labels=[0,1]))
+# print(metrics.confusion_matrix(lab_train, train_preds, labels=[0,1]))
 print("Val Accuracy: %.4f, Val F1-Score: %.4f"%(round(accuracy,4), round(f1_score,4)))
-print(metrics.confusion_matrix(lab_val, val_preds, labels=[0,1]))
+# print(metrics.confusion_matrix(lab_val, val_preds, labels=[0,1]))
 print("Test Accuracy: %.4f, Test F1-Score: %.4f"%(
                         round(metrics.accuracy_score(lab_test, test_preds),4),
                         round(metrics.f1_score(lab_test, test_preds, average='weighted'),4)))
-print(metrics.confusion_matrix(lab_test, test_preds, labels=[0,1]))
+# print(metrics.confusion_matrix(lab_test, test_preds, labels=[0,1]))
 print('\n')
