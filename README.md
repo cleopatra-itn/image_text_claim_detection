@@ -16,6 +16,10 @@ Extended dataset can be downloaded from here: https://zenodo.org/record/4592249
 - To install ThunderSVM on linux system `pip install wheel https://github.com/Xtra-Computing/thundersvm/releases/download/v0.3.4/thundersvm_cuda10.1-0.3.4-cp36-cp36m-linux_x86_64.whl`
 - Alternatively, ThunderSVM release for windows can be found [here](https://github.com/Xtra-Computing/thundersvm/releases).
 
+## Data and Feature Extraction
+- Download data from the zenodo repository
+- Extract each zip file in `data/`
+
 
 If you find the shared resources useful, please cite:
 ```

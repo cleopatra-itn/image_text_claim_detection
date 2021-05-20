@@ -1,0 +1,3 @@
+[submodule "arabert"]
+	path = arabert
+	url = https://github.com/aub-mind/arabert.git

@@ -15,15 +15,13 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Training SVM')
+parser = argparse.ArgumentParser(description='Extract Visual Features for Tweet Images')
 parser.add_argument('--vmodel', type=str, default='resnet152',
-                    help='resnet50 | resnet101')
+                    help='resnet50 | resnet101 | resnet152')
 parser.add_argument('--vtype', type=str, default='imgnet',
                     help='imgnet | plc | hybrid')
 parser.add_argument('--dset', type=str, default='clef_en',
                     help='clef_en | clef_ar | mediaeval | lesa')
-parser.add_argument('--gpu_id', type=int, default=0,
-                    help='0,1,2,3')
 
 args = parser.parse_args()
 
@@ -59,65 +57,28 @@ class CustomDataset(Dataset):
 
 
 
-def get_imagenet_feats(root, model_nm):
-
+def get_visual_feats():
+    print(vtype, vmodel, dset)
     feats, logits, im_names = [], [], []
 
     def feature_hook(module, input, output):
         return feats.extend(output.view(-1,output.shape[1]).data.cpu().numpy().tolist())
 
-    def feature_hook_dense(module, input, output):
-        output = F.adaptive_avg_pool2d(output, (1, 1))
-        output = torch.flatten(output, 1)
-        return feats.extend(output.view(-1,output.shape[1]).data.cpu().numpy().tolist())
-
-    model = models.__dict__[model_nm](pretrained=True)
+    if vtype == 'imgnet':
+        model = models.__dict__[vmodel](pretrained=True)
+    elif vtype == ['plc', 'hybrid']:
+        model_file = 'pretrained_models/%s_best.pth.tar'%(vmodel) if vtype == 'plc' else \
+            'pretrained_models/%s_hybrid_best.pth.tar'%(vmodel)
+        model = models.__dict__[model_nm](num_classes=365)  if vtype == 'plc' else \
+            models.__dict__[model_nm](num_classes=1365)
+        checkpoint = torch.load(model_file, map_location=lambda storage, loc: storage)
+        state_dict = {str.replace(k,'module.',''): v for k,v in checkpoint['state_dict'].items()}
+        model.load_state_dict(state_dict)
 
     model.eval().to(device)
-
-    if 'dense' in model_nm:
-        model._modules.get('features').register_forward_hook(feature_hook_dense)
-    else:
-        model._modules.get('avgpool').register_forward_hook(feature_hook)
-
-    dataset = CustomDataset(root, transform_config)
-    dt_loader = DataLoader(dataset, batch_size=32, num_workers=2)
-
-    for i, batch in enumerate(dt_loader):
-        print(i)
-        im_nms, images = batch
-
-        images = images.to(device)
-
-        with torch.no_grad():
-            outputs = model(images)
-        
-        logits.extend(outputs.view(-1,outputs.shape[1]).data.cpu().numpy().tolist())
-
-        im_names.extend(im_nms)
-
-    return feats, logits, im_names
-
-
-
-def get_places365_feats(root, model_nm):
-
-    feats, logits, im_names = [], [], []
-
-    def feature_hook(module, input, output):
-        return feats.extend(output.view(-1,output.shape[1]).data.cpu().numpy().tolist())
-
-    model_file = '/media/gullal/Extra_Disk_1/places_models/%s_best.pth.tar'%(model_nm)
-    model = models.__dict__[model_nm](num_classes=365)
-    checkpoint = torch.load(model_file, map_location=lambda storage, loc: storage)
-    state_dict = {str.replace(k,'module.',''): v for k,v in checkpoint['state_dict'].items()}
-    
-    model.load_state_dict(state_dict)
-    model.eval().to(device)
-
     model._modules.get('avgpool').register_forward_hook(feature_hook)
 
-    dataset = CustomDataset(root, transform_config)
+    dataset = CustomDataset(dloc, transform_config)
     dt_loader = DataLoader(dataset, batch_size=32, num_workers=2)
 
     for i, batch in enumerate(dt_loader):
@@ -132,44 +93,6 @@ def get_places365_feats(root, model_nm):
         logits.extend(outputs.view(-1,outputs.shape[1]).data.cpu().numpy().tolist())
 
         im_names.extend(im_nms)
-
-    return feats, logits, im_names
-
-
-
-def get_hybrid_feats(root, model_nm):
-
-    feats, logits, im_names = [], [], []
-
-    def feature_hook(module, input, output):
-        return feats.extend(np.squeeze(output.data.cpu().numpy()).tolist())
-
-    model_file = '/media/gullal/Extra_Disk_1/places_models/%s_hybrid_best.pth.tar'%(model_nm)
-    model = models.__dict__[model_nm](num_classes=1365)
-    checkpoint = torch.load(model_file, map_location=lambda storage, loc: storage)
-    state_dict = {str.replace(k,'module.',''): v for k,v in checkpoint['state_dict'].items()}
-    
-    model.load_state_dict(state_dict)
-    model.eval().to(device)
-
-    model._modules.get('avgpool').register_forward_hook(feature_hook)
-
-    dataset = CustomDataset(root, transform_config)
-    dt_loader = DataLoader(dataset, batch_size=32, num_workers=2)
-
-    for i, batch in enumerate(dt_loader):
-        print(i)
-        im_nms, images = batch
-
-        images = images.to(device)
-
-        with torch.no_grad():
-            outputs = model(images)
-        
-        logits.extend(outputs.view(-1,outputs.shape[1]).data.cpu().numpy().tolist())
-
-        im_names.extend(im_nms)
-
 
     return feats, logits, im_names
 
@@ -179,9 +102,9 @@ vmodel = args.vmodel
 vtype = args.vtype
 
 if dset == 'clef_en':
-    dloc = 'data/clef/english/images/'
+    dloc = 'data/clef_en/images/'
 elif dset == 'clef_ar':
-    dloc = 'data/clef/arabic/images/'
+    dloc = 'data/clef_ar/images/'
 elif dset == 'mediaeval':
     dloc = 'data/mediaeval/images/'
 else:
@@ -190,9 +113,13 @@ else:
 
 ## Extract and Save Features
 feat_dict = {}
-feats, logits, im_names = get_imagenet_feats(dloc, vmodel)
+feats, logits, im_names = get_visual_feats()
 
 feat_dict['feats'] = {name:feat for name,feat in zip(im_names, feats)}
 feat_dict['logits'] = {name:feat for name,feat in zip(im_names, logits)}
 
-json.dump(feat_dict, open('features/image/%s_%s_%s.json'%(dset, vtype, vmodel), 'w'))
+output_loc = 'features/image/'
+if not os.path.exists(output_loc):
+        os.makedirs(output_loc)
+
+json.dump(feat_dict, open(output_loc+'/%s_%s_%s.json'%(dset, vtype, vmodel), 'w'))

@@ -2,20 +2,14 @@ from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.tokenizer import SocialTokenizer
 from ekphrasis.dicts.emoticons import emoticons
 
-from nltk.corpus import stopwords
-
 import torch
 import numpy as np
-
-from nltk.tokenize import WordPunctTokenizer
 import re
 import emoji
 import itertools
 
-df_stopwords = set(stopwords.words('english'))
 
-
-def get_text_processor(word_stats='twitter'):
+def get_text_processor(word_stats='twitter', keep_hashtags=False):
     return TextPreProcessor(
             # terms that will be normalized , 'number','money', 'time','date', 'percent' removed from below list
             normalize=['url', 'email', 'phone', 'user'],
@@ -32,7 +26,7 @@ def get_text_processor(word_stats='twitter'):
             # for spell correction
             corrector=word_stats,
 
-            unpack_hashtags=False,  # perform word segmentation on hashtags
+            unpack_hashtags=keep_hashtags,  # perform word segmentation on hashtags
             unpack_contractions=True,  # Unpack contractions (can't -> can not)
             spell_correct_elong=True,  # spell correction for elongated words
 
@@ -45,52 +39,6 @@ def get_text_processor(word_stats='twitter'):
             dicts=[emoticons]
         )
 
-
-
-def get_text_processor_hashtag(word_stats='twitter'):
-    return TextPreProcessor(
-            # terms that will be normalized , 'number','money', 'time','date', 'percent' removed from below list
-            normalize=['url', 'email', 'phone', 'user'],
-            # terms that will be annotated
-            annotate={"hashtag","allcaps", "elongated", "repeated",
-                      'emphasis', 'censored'},
-            fix_html=True,  # fix HTML tokens
-
-            # corpus from which the word statistics are going to be used
-            # for word segmentation
-            segmenter=word_stats,
-
-            # corpus from which the word statistics are going to be used
-            # for spell correction
-            corrector=word_stats,
-
-            unpack_hashtags=True,  # perform word segmentation on hashtags
-            unpack_contractions=True,  # Unpack contractions (can't -> can not)
-            spell_correct_elong=True,  # spell correction for elongated words
-
-            # select a tokenizer. You can use SocialTokenizer, or pass your own
-            # the tokenizer, should take as input a string and return a list of tokens
-            tokenizer=SocialTokenizer(lowercase=True).tokenize,
-
-            # list of dictionaries, for replacing tokens extracted from the text,
-            # with other expressions. You can pass more than one dictionaries.
-            dicts=[emoticons]
-        )
-
-
-    
-
-def avg_wordembs_wostop(tokens, word_embs, emb_sz):
-    embs = []
-    for i in range (len(tokens)):
-        if tokens[i] not in df_stopwords:
-            embs.append(word_embs[i])
-
-    embs = np.array(embs)
-    if not np.any(embs):
-        return np.zeros(emb_sz).astype(np.float) 
-
-    return np.mean(embs, axis=0)
 
 
 def get_word_sent_embedding(tweet, model, tokenizer, device):
@@ -100,7 +48,7 @@ def get_word_sent_embedding(tweet, model, tokenizer, device):
     # Predict hidden states features for each layer
     with torch.no_grad():
         try:
-            last_out, pooled_out, encoded_layers = model(input_ids, return_dict=False)
+            last_out, _, encoded_layers = model(input_ids, return_dict=False)
         except:
             last_out, encoded_layers = model(input_ids, return_dict=False)
 
@@ -161,7 +109,4 @@ def get_word_sent_embedding(tweet, model, tokenizer, device):
     # Calculate the average of all 22 token vectors.
     sent_emb_2_last = torch.mean(token_vecs, dim=0).cpu().numpy()
 
-    if pooled_out == None:
-        return sent_word_catavg, sent_word_sumavg, sent_emb_2_last, sent_emb_last
-    else:
-        return sent_word_catavg, sent_word_sumavg, sent_emb_2_last, sent_emb_last
+    return sent_word_catavg, sent_word_sumavg, sent_emb_2_last, sent_emb_last

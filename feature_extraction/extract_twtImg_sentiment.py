@@ -1,3 +1,5 @@
+## Extraction code based on: https://github.com/fabiocarrara/visual-sentiment-analysis/blob/main/predict.py
+
 import os, sys, json
 import argparse
 import numpy as np
@@ -38,13 +40,10 @@ class ImageListDataset (Dataset):
 
 def main(args):
 
-    feats1, feats2, logits, im_names = [], [], [], []
+    feats1, logits, im_names = [], [], []
     data_dict = {}
-
-    def feature_hook1(module, input, output):
-        return feats1.extend(output.view(-1,output.shape[1]).data.cpu().numpy().tolist())
     
-    def feature_hook2(module, input, output):
+    def feature_hook(module, input, output):
         return feats2.extend(output.view(-1,output.shape[1]).data.cpu().numpy().tolist())
 
     transform = t.Compose([
@@ -56,14 +55,13 @@ def main(args):
 
     image_list = os.listdir(args.root)
     data = ImageListDataset(image_list, root=args.root, transform=transform)
-    dataloader = DataLoader(data, batch_size=args.batch_size, num_workers=4, pin_memory=True)
+    dataloader = DataLoader(data, batch_size=args.batch_size, num_workers=2)
     
     model = AlexNet if 'hybrid' in args.model else VGG19
     model = model('t4sa/{}.pth'.format(args.model)).to('cuda')
     model.eval()
     
-    model._modules.get('fc6_1').register_forward_hook(feature_hook1)
-    model._modules.get('fc7_1').register_forward_hook(feature_hook2)
+    model._modules.get('fc7_1').register_forward_hook(feature_hook)
 
     with torch.no_grad():
         for x, im_nms in tqdm(dataloader):
@@ -72,11 +70,11 @@ def main(args):
             logits.extend(logs.cpu().numpy().tolist())
             im_names.extend(im_nms)
 
-
-    data_dict['feats_fc6'] = {name:feat for name,feat in zip(im_names, feats1)}
-    data_dict['feats_fc7'] = {name:feat for name,feat in zip(im_names, feats2)}
+    data_dict['feats_fc7'] = {name:feat for name,feat in zip(im_names, feats1)}
     data_dict['logits'] = {name:feat for name,feat in zip(im_names, logits)}
 
+    if not os.path.exists('features/image/'):
+        os.makedirs('features/image/')
     json.dump(data_dict, open('features/image/%s_t4sa_%s.json'%(args.dset, args.model), 'w'))
     
 if __name__ == '__main__':
@@ -85,10 +83,10 @@ if __name__ == '__main__':
           'vgg19_finetuned_fc6+',
           'vgg19_finetuned_all')
 
-    parser = argparse.ArgumentParser(description='Predict Visual Sentiment')
+    parser = argparse.ArgumentParser(description='Extract Visual Sentiment Features')
     parser.add_argument('-d', '--dset', default=None, help='Which dataset (clef_en | clef_ar | mediaeval | lesa)')
     parser.add_argument('-r', '--root', default=None, help='Root path to prepend to image list')
-    parser.add_argument('-m', '--model', type=str, choices=models, default='hybrid_finetuned_all', help='Pretrained model')
+    parser.add_argument('-m', '--model', type=str, choices=models, default='vgg19_finetuned_all', help='Pretrained model')
     parser.add_argument('-b', '--batch-size', type=int, default=32, help='Batch size')
     args = parser.parse_args()
     main(args)
