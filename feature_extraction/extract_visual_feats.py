@@ -67,7 +67,7 @@ def get_visual_feats():
     if vtype == 'imgnet':
         model = models.__dict__[vmodel](pretrained=True)
     elif vtype == ['plc', 'hybrid']:
-        model_file = 'pretrained_models/%s_best.pth.tar'%(vmodel) if vtype == 'plc' else \
+        model_file = 'pretrained_models/%s_places_best.pth.tar'%(vmodel) if vtype == 'plc' else \
             'pretrained_models/%s_hybrid_best.pth.tar'%(vmodel)
         model = models.__dict__[model_nm](num_classes=365)  if vtype == 'plc' else \
             models.__dict__[model_nm](num_classes=1365)
