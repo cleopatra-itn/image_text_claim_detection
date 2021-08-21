@@ -19,7 +19,7 @@ Extended dataset can be downloaded from here: https://zenodo.org/record/4592249
 ## Data and Feature Extraction
 - Download data from the zenodo repository
 - Extract each zip file in `data/`
-- Download pretrained [places](https://tib.eu/cloud/s/zEx77j4AodBP48a) and [hybrid](https://tib.eu/cloud/s/kgdejg4mJm36dEY) models.
+- Download pretrained [places](https://drive.google.com/file/d/1ARP8GS5LMGYc8T8lFTuYkBl9I9kJoIiL/view?usp=sharing) and [hybrid](https://drive.google.com/file/d/1i2NjrxRwQ3IQDrzmrmQEbCEOb8H6HXgM/view?usp=sharing) models.
 - Extract Textual Features,
     - English : `python feature_extraction/extract_bert_en.py -d clef_en -m bertbase -p clean`
     - Arabic : `python feature_extraction/extract_bert_ar.py -m arabert`
