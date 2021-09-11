@@ -77,14 +77,7 @@ dset = args.dset
 tfeat = args.tfeat
 ttype = args.ttype
 
-if dset == 'clef_en':
-    data_loc = 'data/clef_en/splits/'
-elif dset == 'clef_ar':
-    data_loc = 'data/clef_ar/splits/'
-elif dset == 'mediaeval':
-    data_loc = 'data/mediaeval/splits/'
-else:
-    data_loc = 'data/lesa/splits/'
+data_loc = 'data/%s/splits/'%(args.dset)
 
 tr_df = pd.read_csv(data_loc+'train_%d.txt'%(split), header=None)
 vl_df = pd.read_csv(data_loc+'val.txt', header=None)
