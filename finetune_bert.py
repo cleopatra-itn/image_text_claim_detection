@@ -25,20 +25,20 @@ parser.add_argument('--btype', type=str, default='bert-base-uncased',
                     help='bert-base-uncased | bertweet | covid_twitter | arabert | bertarabic')           
 parser.add_argument('--ttype', type=str, default='clean',
                     help='clean | ht | raw | pp (arabic)')
-parser.add_argument('--dset', type=str, default='clef_en',
-                    help='clef_en | clef_ar | mediaeval')
+parser.add_argument('--dset', type=str, default='lesa',
+                    help='clef_en | clef_ar | mediaeval | lesa')
 parser.add_argument('--freeze', type=int, default=1,
                     help='True (1) | False (0)')
 parser.add_argument('--fr_no', type=int, default=8,
                     help='0-12 | Number of encoder layers to freeze')
 parser.add_argument('--wt_ce', type=int, default=0,
                     help='True (1) | False (0)')
-parser.add_argument('--lr', type=str, default='3e-5',
+parser.add_argument('--lr', type=str, default='5e-5',
                     help='5e-5 | 3e-5 (Default) | 2e-5')
 parser.add_argument('--epochs', type=int, default=6,
-                    help='2, 3, 4')
-parser.add_argument('--bs', type=int, default=4,
-                    help='8, 16')
+                    help='Number of epochs to train the model')
+parser.add_argument('--bs', type=int, default=16,
+                    help='4 (for Clef_en), 8, 16')
 parser.add_argument('--split', type=int, default=0,
                     help='0-4')
 parser.add_argument('--gpu', type=int, default=0,
