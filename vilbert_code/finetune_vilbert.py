@@ -26,20 +26,20 @@ from helper_functions import *
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Extract VilBERT feats')
+parser = argparse.ArgumentParser(description='Train VilBERT with pooled features')
 parser.add_argument('--model', type=str, default='image_ret')
 parser.add_argument('--dset', type=str, default='mediaeval',
                     help='clef_en | clef_ar | mediaeval | lesa')
 parser.add_argument('--split', type=int, default=0,
                     help='0-4')
 parser.add_argument('--unfr', type=int, default=2,
-                    help='2 | 4 | 6')
+                    help='2 | 4 | 6 (Number of co-attention layers to un-freeze/train')
 parser.add_argument('--lr', type=str, default='5e-5',
                     help='2e-5 | 3e-5 | 5e-5')
 parser.add_argument('--wt_ce', type=int, default=0,
                     help='0 | 1')
 parser.add_argument('--bs', type=int, default=16,
-                    help='8 | 16')
+                    help='4 | 8 | 16')
 parser.add_argument('--epochs', type=int, default=6)
 parser.add_argument('--pool', type=str, default='add')
 args = parser.parse_args()

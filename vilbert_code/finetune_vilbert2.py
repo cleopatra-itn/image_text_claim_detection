@@ -26,7 +26,7 @@ from helper_functions import *
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Extract VilBERT feats')
+parser = argparse.ArgumentParser(description='Train VilBERT with averaged features')
 parser.add_argument('--model', type=str, default='refcoco')
 parser.add_argument('--dset', type=str, default='lesa',
                     help='clef_en | clef_ar | mediaeval')
@@ -39,7 +39,7 @@ parser.add_argument('--lr', type=str, default='5e-5',
 parser.add_argument('--wt_ce', type=int, default=0,
                     help='0 | 1')
 parser.add_argument('--bs', type=int, default=16,
-                    help='8 | 16')
+                    help='4 | 8 | 16')
 parser.add_argument('--epochs', type=int, default=6)
 args = parser.parse_args()
 
