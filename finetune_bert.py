@@ -14,7 +14,7 @@ from sklearn import metrics
 from preprocess_covidbert import *
 from arabert.preprocess import ArabertPreprocessor
 
-from helper_functions import *
+from feature_extraction.helper_functions import *
 
 from urlextract import URLExtract
 
