@@ -228,7 +228,7 @@ else:
 
 
 ## Training, Validation and Test Text
-data_dict = json.load(open(data_loc+'new_lists/data.json', 'r', encoding='utf-8'))
+data_dict = json.load(open(data_loc+'data.json', 'r', encoding='utf-8'))
 
 train_df = pd.read_csv(data_loc+'splits/train_%d.txt'%(split), header=None)
 val_df = pd.read_csv(data_loc+'splits/val.txt', header=None)
