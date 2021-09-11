@@ -38,7 +38,10 @@ Extended dataset can be downloaded from here: https://zenodo.org/record/4592249
 
 
 ## BERT Fine-tuning
--TODO
+- For ClEF_En: `python finetune_bert.py --btype bertweet --dset clef_en --bs 4`
+- For LESA: `python finetune_bert.py --btype bertweet --dset lesa`
+- For MediaEval: `python finetune_bert.py --btype covid_twitter --dset mediaeval`
+- For CLEF_Ar: `python finetune_bert.py --btype arabert --dset clef_ar`
 
 If you find the shared resources useful, please cite:
 ```
