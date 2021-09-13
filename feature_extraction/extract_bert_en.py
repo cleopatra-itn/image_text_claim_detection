@@ -42,13 +42,7 @@ dtype = args.dtype
 mtype = args.mtype
 proc = args.proc
 
-if dtype == 'clef_en':
-    data_loc = 'data/clef_en/'
-elif dtype == 'mediaeval':
-    data_loc = 'data/mediaeval/'
-elif dtype == 'lesa':
-    data_loc = 'data/lesa/'
-
+data_loc = 'data/%s/'%(dtype)
 
 data_dict = json.load(open(data_loc+'data.json', 'r'))
 
