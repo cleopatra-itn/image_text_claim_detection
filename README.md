@@ -33,7 +33,7 @@ Extended dataset can be downloaded from here: https://zenodo.org/record/4592249
 - Extract Visual Features
     - Visual Sentiment : `python feature_extraction/extract_sent_feats.py -d clef_en -m vgg19_finetuned_all -b 32`
     - Visual Scene : `python feature_extraction/extract_visual_feats.py -v resnet152 -t imgnet -d clef_en`
-- Extract VilBert Features
+- For VilBert
     - Extract bottom-up faster-RCNN features from images:
         - `python vilbert-multi-task/script/extract_features.py --model_file vilbert-multi-task/data/detectron_model.pth --config_file vilbert-multi-task/data/detectron_config.yaml --image_dir data/lesa/images/ --output_folder data/lesa/rcnn_feats/`
         - `python vilbert-multi-task/script/convert_to_lmdb.py --features_dir data/lesa/rcnn_feats/ --lmdb_file data/lesa/rcnn_lmdbs/`
