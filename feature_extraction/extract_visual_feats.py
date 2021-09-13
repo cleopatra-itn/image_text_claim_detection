@@ -69,8 +69,8 @@ def get_visual_feats():
     elif vtype == ['plc', 'hybrid']:
         model_file = 'pretrained_models/%s_places_best.pth.tar'%(vmodel) if vtype == 'plc' else \
             'pretrained_models/%s_hybrid_best.pth.tar'%(vmodel)
-        model = models.__dict__[model_nm](num_classes=365)  if vtype == 'plc' else \
-            models.__dict__[model_nm](num_classes=1365)
+        model = models.__dict__[vmodel](num_classes=365)  if vtype == 'plc' else \
+            models.__dict__[vmodel](num_classes=1365)
         checkpoint = torch.load(model_file, map_location=lambda storage, loc: storage)
         state_dict = {str.replace(k,'module.',''): v for k,v in checkpoint['state_dict'].items()}
         model.load_state_dict(state_dict)
