@@ -53,14 +53,7 @@ def main(args):
         t.Normalize(mean=[116.8007, 121.2751, 130.4602], std=[1,1,1]),  # mean subtraction
     ])
 
-    if args.dset == 'clef_en':
-        dloc = 'data/clef_en/images/'
-    elif args.dset == 'clef_ar':
-        dloc = 'data/clef_ar/images/'
-    elif args.dset == 'mediaeval':
-        dloc = 'data/mediaeval/images/'
-    else:
-        dloc = 'data/lesa/images/'
+    dloc = 'data/%s/images'%(args.dset)
     
     image_list = os.listdir(dloc)
     data = ImageListDataset(image_list, root=dloc, transform=transform)
