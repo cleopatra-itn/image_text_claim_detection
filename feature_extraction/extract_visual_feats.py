@@ -101,15 +101,7 @@ dset = args.dset
 vmodel = args.vmodel
 vtype = args.vtype
 
-if dset == 'clef_en':
-    dloc = 'data/clef_en/images/'
-elif dset == 'clef_ar':
-    dloc = 'data/clef_ar/images/'
-elif dset == 'mediaeval':
-    dloc = 'data/mediaeval/images/'
-else:
-    dloc = 'data/lesa/images/'
-
+dloc = 'data/%s/images/'%(dset)
 
 ## Extract and Save Features
 feat_dict = {}
